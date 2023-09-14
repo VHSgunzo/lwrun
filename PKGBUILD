@@ -2,7 +2,7 @@
 
 pkgname='runimage-rootfs-lwrun'
 pkgver='0.39.1'
-pkgrel='2'
+pkgrel='3'
 pkgdesc='Rootfs configuration for RunImage container'
 url="https://github.com/VHSgunzo/lwrun"
 license=('MIT')
