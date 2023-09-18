@@ -30,10 +30,10 @@ if [[ "$SANDBOX_HOME" != 1 && \
                 if [[ ! -d "$NVIDIA_DRIVERS_DIR/$nvidia_version" && \
                       ! -f "$NVIDIA_DRIVERS_DIR/$nvidia_version.nv.drv" ]]
                     then
-                        if [ -d "$nvidia_version" ]
-                            then try_mv_nvdrv "$nvidia_version"
-                        elif [ -f "$nvidia_version.nv.drv" ]
-                            then try_mv_nvdrv "$nvidia_version.nv.drv"
+                        if [ -d "$RUNIMAGEDIR/$nvidia_version" ]
+                            then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version"
+                        elif [ -f "$RUNIMAGEDIR/$nvidia_version.nv.drv" ]
+                            then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version.nv.drv"
                         fi
                 fi
         fi
