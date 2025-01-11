@@ -16,6 +16,7 @@ if [[ "$ARG1" == "--uninstall" && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
     else
         RIM_CMPRS_LVL="${RIM_CMPRS_LVL:=22}"
         RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
+        RIM_SYS_NVLIBS="${RIM_SYS_NVLIBS:=1}"
         RIM_UNSHARE_HOSTS="${RIM_UNSHARE_HOSTS:=1}"
         RIM_EXEC_SAME_PWD="${RIM_EXEC_SAME_PWD:=1}"
         RIM_UPDATE_CLEANUP="${RIM_UPDATE_CLEANUP:=1}"
