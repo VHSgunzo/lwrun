@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning up package cache...
+Depends = coreutils
+When = PostTransaction
+Exec = /usr/bin/sh -c 'if [[ "$RIM_UPDATE_CLEANUP" != 1 && "$RIM_UPDATE_SHRINK" != 1 ]]; then /usr/bin/rm -rf /var/cache/pacman/pkg/* ; fi'

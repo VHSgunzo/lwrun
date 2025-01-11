@@ -7,4 +7,4 @@ Target = usr/bin/xdg-open
 [Action]
 Description = Updating xdg-open...
 When = PostTransaction
-Exec = /usr/bin/sh -c '/usr/bin/ln -rsf /usr/bin/exo-open /usr/bin/xdg-open 2>/dev/null'
+Exec = /usr/bin/sh -c '[ -f '/usr/bin/exo-open' ] && /usr/bin/ln -sfr /usr/bin/exo-open /usr/bin/xdg-open'

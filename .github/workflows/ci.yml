@@ -1,31 +1,58 @@
-name: CI
+name: ⚙️ Continuous update 📦
 
 on:
-  push:
-    branches:
-    - action
-    tags:
-    - '*'
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0" #At 00:00 UTC on Sunday every Week
 
 jobs:
-  build_and_release:
-    name: runimage-rootfs-lwrun
+  update_rebuild_and_release:
+    name: lwrun-update
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build archlinux package
-        uses: countstarlight/arch-makepkg-action@master
+        uses: actions/checkout@v4
         with:
-          scripts: "./build.sh"
+          path: main
+          filter: "blob:none"
+
+      - name: Install deps
+        run: |
+          sudo sh -c 'apt update && apt install zsync -y'
+
+      - name: Bootstrap RunImage
+        run: |
+            set -x ; set +e
+            mkdir -p release && cd release||exit 1
+
+            curl -LO https://github.com/VHSgunzo/lwrun/releases/download/continuous/lwrun
+            chmod +x lwrun
+            ./lwrun --runtime-extract
+            rm -f lwrun
+            ./RunDir/Run rim-update
+            ./RunDir/Run rim-shrink -a
+            ./RunDir/Run rim-pkgls > pkg_list-lwrun.txt
+            ./RunDir/Run rim-build -d -b 18 -z -c 22 lwrun
+            rm -rf RunDir
+            sha256sum_lwrun="$(sha256sum lwrun)"
+            zsyncmake lwrun
+
+            echo "\
+            -----------------------------------------------------------------------------------------------------------------------------
+            * [lwrun](https://github.com/VHSgunzo/lwrun/releases/download/continuous/lwrun) | [pkg_list-lwrun.txt](https://github.com/VHSgunzo/lwrun/releases/download/continuous/pkg_list-lwrun.txt)
+            -----------------------------------------------------------------------------------------------------------------------------
+            ## sha256sum:
+            ```
+            ${sha256sum_lwrun}
+            ```" > ../RELEASE_NOTE.md
 
       - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
-          files: runimage-rootfs-lwrun*.tar.*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: "continuous"
+          prerelease: false
+          draft: false
+          body_path: "RELEASE_NOTE.md"
+          files: release/*

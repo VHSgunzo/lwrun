@@ -1,31 +1,53 @@
 ## arg 1:  the new package version
 pre_install() {
-    true
+    rm -rf /var/lib/pacman/local/filesystem-*
+    updhook=/usr/share/libalpm/scripts/update-rootfs
+    if [ -f "$updhook" ] && \
+        ! grep -q unset "$updhook"
+        then
+            sed -i '2i\unset LD_PRELOAD' "$updhook"
+            sed -i 's|rootfs /|rootfs /var/RunDir/rootfs|' "$updhook"
+    fi
 }
 
 ## arg 1:  the new package version
-#post_install() {
-    # do something here
+post_install() {
+    if [ -f '/usr/bin/winetricks' ]
+        then /usr/share/libalpm/scripts/fix-wtrx
+    fi
+    if [[ -f '/usr/bin/exo-open' && -f '/usr/bin/xdg-open' && ! -L '/usr/bin/xdg-open' ]]
+        then ln -sfr /usr/bin/exo-open /usr/bin/xdg-open
+    fi
+    if ! grep -q 'KOI8-R' /etc/locale.gen
+        then
+            for loc in RU UA
+                do
+                    if ! grep -q "ru_${loc}.KOI8-R" /etc/locale.gen
+                        then echo "ru_${loc}.KOI8-R KOI8-R" >> /etc/locale.gen
+                    fi
+            done
+            locale-gen
+    fi
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+#pre_upgrade() {
+#     do something here
 #}
 
 ## arg 1:  the new package version
 ## arg 2:  the old package version
-pre_upgrade() {
-    pre_install
+post_upgrade() {
+    post_install
 }
-
-## arg 1:  the new package version
-## arg 2:  the old package version
-#post_upgrade() {
-    # do something here
-#}
 
 ## arg 1:  the old package version
 #pre_remove() {
-    # do something here
+#     do something here
 #}
 
 ## arg 1:  the old package version
 #post_remove() {
-    # do something here
+#     do something here
 #}

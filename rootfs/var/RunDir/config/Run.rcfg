@@ -1,47 +1,78 @@
 try_mv_nvdrv() {
-    mkdir -p "$NVIDIA_DRIVERS_DIR"
+    mkdir -p "$RIM_NVIDIA_DRIVERS_DIR"
     if [ -w "$1" ]
-        then mv -f "$1" "$NVIDIA_DRIVERS_DIR/" 2>/dev/null
-        else cp -rf "$1" "$NVIDIA_DRIVERS_DIR/" 2>/dev/null
+        then mv -f "$1" "$RIM_NVIDIA_DRIVERS_DIR/" 2>/dev/null
+        else cp -rf "$1" "$RIM_NVIDIA_DRIVERS_DIR/" 2>/dev/null
     fi
 }
 
-DONT_NOTIFY=1
-SQFUSE_REMOUNT=1
-ENABLE_HOSTEXEC=1
+LW_DIR="$HOME/.local/share/LuxWine"
 
-[ "$RUNSRCNAME" == 'lwrun' ] && \
-    AUTORUN=lwrap
-
-if [[ "$SANDBOX_HOME" != 1 && \
-      "$SANDBOX_HOME_DL" != 1 && \
-      ! -d "$SANDBOXHOMEDIR/lwrap" && \
-      "$PORTABLE_HOME" != 1 && \
-      "$TMP_HOME" != 1 && \
-      "$TMP_HOME_DL" != 1 && \
-      ! -d "$PORTABLEHOMEDIR/lwrap" ]]
+if [[ "$ARG1" == "--uninstall" && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
     then
-        LW_DIR="$HOME/.local/share/LuxWine"
-        RUNCACHEDIR="$LW_DIR/bin/cache"
-        NVIDIA_DRIVERS_DIR="$LW_DIR/bin/nvidia-drivers"
-        nvidia_version="$(cat /sys/module/nvidia/version 2>/dev/null)"
-        if [ -n "$nvidia_version" ]
+        RIM_OVERFS_MODE=0
+        RIM_NO_NVIDIA_CHECK=1
+        unset RIM_KEEP_OVERFS RIM_OVERFS_ID
+    else
+        RIM_CMPRS_LVL="${RIM_CMPRS_LVL:=22}"
+        RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
+        RIM_UNSHARE_HOSTS="${RIM_UNSHARE_HOSTS:=1}"
+        RIM_EXEC_SAME_PWD="${RIM_EXEC_SAME_PWD:=1}"
+        RIM_UPDATE_CLEANUP="${RIM_UPDATE_CLEANUP:=1}"
+        RIM_ENABLE_HOSTEXEC="${RIM_ENABLE_HOSTEXEC:=1}"
+        RIM_UNSHARE_HOSTNAME="${RIM_UNSHARE_HOSTNAME:=1}"
+
+        if [ -n "$RUNIMAGE" ]
             then
-                if [[ ! -d "$NVIDIA_DRIVERS_DIR/$nvidia_version" && \
-                      ! -f "$NVIDIA_DRIVERS_DIR/$nvidia_version.nv.drv" ]]
-                    then
-                        if [ -d "$RUNIMAGEDIR/$nvidia_version" ]
-                            then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version"
-                        elif [ -f "$RUNIMAGEDIR/$nvidia_version.nv.drv" ]
-                            then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version.nv.drv"
-                        fi
-                fi
+                RIM_KEEP_OVERFS="${RIM_KEEP_OVERFS:=1}"
+                RIM_OVERFS_ID="${RIM_OVERFS_ID:=lux-wine}"
         fi
 fi
 
-BWRAP_CAP+=("--cap-add" "CAP_SYS_ADMIN")
+if [ "$RUNSRCNAME" == 'lwrun' ]
+    then RIM_AUTORUN='/usr/bin/lwrap'
+fi
 
-SETENV_ARGS+=(
+if [[ "$REALRUNSRC" == "$LW_DIR/bin/lwrun" ||\
+      "$REALRUNSRC" =~ ^/(usr/bin|bin|opt)/lwrun$ ||\
+      "${REALRUNSRC,,}" =~ .*/(run|cdrom.*/lwrun|sr[0-9]/lwrun)$ ]]
+    then
+        RIM_HOST_TOOLS+=',intel_gpu_top'
+        if [[ ! "$ARG1" =~ --(in|unin)stall && "$RUNSRC" =~ ("$LW_DIR/bin"|"$HOME/.local/bin") \
+             && "$RUNSRCNAME" =~ (lwrap|lux-wine|wine|firefox|lwrun|steam.*) ]]
+            then
+                RIM_SHARE_ICONS="${RIM_SHARE_ICONS:=1}"
+                RIM_SHARE_FONTS="${RIM_SHARE_FONTS:=1}"
+                RIM_SHARE_THEMES="${RIM_SHARE_THEMES:=1}"
+                RIM_WAIT_RPIDS_EXIT="${RIM_WAIT_RPIDS_EXIT:=1}"
+            else
+                RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=0}"
+                RIM_SHARE_ICONS="${RIM_SHARE_ICONS:=0}"
+                RIM_SHARE_FONTS="${RIM_SHARE_FONTS:=0}"
+                RIM_SHARE_THEMES="${RIM_SHARE_THEMES:=0}"
+                RIM_WAIT_RPIDS_EXIT="${RIM_WAIT_RPIDS_EXIT:=0}"
+        fi
+fi
+
+RIM_CACHEDIR="$LW_DIR/bin/cache"
+RIM_OVERFSDIR="$LW_DIR/bin/overlayfs"
+RIM_NVIDIA_DRIVERS_DIR="$LW_DIR/bin/nvidia-drivers"
+nvidia_version="$(cat /sys/module/nvidia/version 2>/dev/null)"
+if [ -n "$nvidia_version" ]
+    then
+        if [[ ! -d "$RIM_NVIDIA_DRIVERS_DIR/$nvidia_version" && \
+                ! -f "$RIM_NVIDIA_DRIVERS_DIR/$nvidia_version.nv.drv" ]]
+            then
+                if [ -d "$RUNIMAGEDIR/$nvidia_version" ]
+                    then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version"
+                elif [ -f "$RUNIMAGEDIR/$nvidia_version.nv.drv" ]
+                    then try_mv_nvdrv "$RUNIMAGEDIR/$nvidia_version.nv.drv"
+                fi
+        fi
+fi
+unset -f try_mv_nvdrv
+
+RIM_BWRAP_ARGS+=(
     "--setenv" "NO_AT_BRIDGE" "1"
     "--setenv" "GDK_BACKEND" "x11"
     "--setenv" "GTK_THEME" "Adwaita:dark"
@@ -52,4 +83,4 @@ SETENV_ARGS+=(
  ! -f "$HOME/.config/gtk-2.0/gtkrc" && \
  ! -f "$HOME/.config/gtkrc" && \
  ! -f "$HOME/.gtkrc-2.0" ]] && \
-SETENV_ARGS+=("--setenv" "GTK2_RC_FILES" "/etc/gtk-2.0/gtkrc")
+RIM_BWRAP_ARGS+=("--setenv" "GTK2_RC_FILES" "/etc/gtk-2.0/gtkrc")
