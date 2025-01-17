@@ -47,7 +47,7 @@ jobs:
             ## sha256sum:
             \`\`\`
             ${sha256sum_lwrun}
-            \`\`\`" > RELEASE_NOTE.md
+            \`\`\`" > ../RELEASE_NOTE.md
 
       - name: Release
         uses: softprops/action-gh-release@v2
