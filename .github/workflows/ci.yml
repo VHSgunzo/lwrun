@@ -45,9 +45,9 @@ jobs:
             * [lwrun](https://github.com/VHSgunzo/lwrun/releases/download/continuous/lwrun) | [pkg_list-lwrun.txt](https://github.com/VHSgunzo/lwrun/releases/download/continuous/pkg_list-lwrun.txt)
             -----------------------------------------------------------------------------------------------------------------------------
             ## sha256sum:
-            ```
+            \`\`\`
             ${sha256sum_lwrun}
-            ```" > ../RELEASE_NOTE.md
+            \`\`\`" > RELEASE_NOTE.md
 
       - name: Release
         uses: softprops/action-gh-release@v2
