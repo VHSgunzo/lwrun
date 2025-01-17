@@ -21,6 +21,7 @@ jobs:
       - name: Install deps
         run: |
           sudo sh -c 'apt update && apt install zsync -y'
+          sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns <<<0
 
       - name: Bootstrap RunImage
         run: |
