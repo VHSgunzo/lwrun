@@ -8,15 +8,15 @@ try_mv_nvdrv() {
 
 LW_DIR="$HOME/.local/share/LuxWine"
 
-if [[ "$ARG1" == "--uninstall" && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
+if [[ "$ARG1" == '--uninstall' && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
     then
         RIM_OVERFS_MODE=0
         RIM_NO_NVIDIA_CHECK=1
         unset RIM_KEEP_OVERFS RIM_OVERFS_ID
     else
         RIM_CMPRS_LVL="${RIM_CMPRS_LVL:=22}"
-        RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
         RIM_SYS_NVLIBS="${RIM_SYS_NVLIBS:=1}"
+        RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
         RIM_UNSHARE_HOSTS="${RIM_UNSHARE_HOSTS:=1}"
         RIM_EXEC_SAME_PWD="${RIM_EXEC_SAME_PWD:=1}"
         RIM_UPDATE_CLEANUP="${RIM_UPDATE_CLEANUP:=1}"
@@ -39,7 +39,8 @@ if [[ "$REALRUNSRC" == "$LW_DIR/bin/lwrun" ||\
       "${REALRUNSRC,,}" =~ .*/(run|cdrom.*/lwrun|sr[0-9]/lwrun)$ ]]
     then
         RIM_HOST_TOOLS+=',intel_gpu_top'
-        if [[ ! "$ARG1" =~ --(in|unin)stall && "$RUNSRC" =~ ("$LW_DIR/bin"|"$HOME/.local/bin") \
+        if [[ ! "$ARG1" =~ --(in|unin)stall && "$ARG1" != '--update' \
+             && "$RUNSRC" =~ ("$LW_DIR/bin"|"$HOME/.local/bin") && "$LWRUN_UPDATE" != 1 \
              && "$RUNSRCNAME" =~ (lwrap|lux-wine|wine|firefox|lwrun|steam.*) ]]
             then
                 RIM_SHARE_ICONS="${RIM_SHARE_ICONS:=1}"
