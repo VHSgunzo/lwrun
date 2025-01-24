@@ -16,12 +16,10 @@ if [[ "$ARG1" == '--uninstall' && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
     else
         RIM_CMPRS_LVL="${RIM_CMPRS_LVL:=22}"
         RIM_SYS_NVLIBS="${RIM_SYS_NVLIBS:=1}"
-        RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
         RIM_UNSHARE_HOSTS="${RIM_UNSHARE_HOSTS:=1}"
         RIM_EXEC_SAME_PWD="${RIM_EXEC_SAME_PWD:=1}"
         RIM_UPDATE_CLEANUP="${RIM_UPDATE_CLEANUP:=1}"
         RIM_ENABLE_HOSTEXEC="${RIM_ENABLE_HOSTEXEC:=1}"
-        RIM_UNSHARE_HOSTNAME="${RIM_UNSHARE_HOSTNAME:=1}"
 
         if [ -n "$RUNIMAGE" ]
             then
@@ -35,6 +33,7 @@ if [ "$RUNSRCNAME" == 'lwrun' ]
 fi
 
 if [[ "$REALRUNSRC" == "$LW_DIR/bin/lwrun" ||\
+      "$RUNSRC" =~ .*/RunDir/lwrun$ ||\
       "$REALRUNSRC" =~ ^/(usr/bin|bin|opt)/lwrun$ ||\
       "${REALRUNSRC,,}" =~ .*/(run|cdrom.*/lwrun|sr[0-9]/lwrun)$ ]]
     then
@@ -43,6 +42,7 @@ if [[ "$REALRUNSRC" == "$LW_DIR/bin/lwrun" ||\
              && "$RUNSRC" =~ ("$LW_DIR/bin"|"$HOME/.local/bin") && "$LWRUN_UPDATE" != 1 \
              && "$RUNSRCNAME" =~ (lwrap|lux-wine|wine|firefox|lwrun|steam.*) ]]
             then
+                RIM_RUN_IN_ONE="${RIM_RUN_IN_ONE:=1}"
                 RIM_SHARE_ICONS="${RIM_SHARE_ICONS:=1}"
                 RIM_SHARE_FONTS="${RIM_SHARE_FONTS:=1}"
                 RIM_SHARE_THEMES="${RIM_SHARE_THEMES:=1}"
