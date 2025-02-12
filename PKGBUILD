@@ -1,7 +1,7 @@
 # Maintainer: VHSgunzo <vhsgunzo.github.io>
 
 pkgname='runimage-rootfs-lwrun'
-pkgver='0.40.3'
+pkgver='0.40.6'
 pkgrel='1'
 pkgdesc='Rootfs configuration for RunImage container'
 url="https://github.com/VHSgunzo/lwrun"

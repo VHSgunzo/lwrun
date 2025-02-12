@@ -77,9 +77,15 @@ unset -f try_mv_nvdrv
 RIM_BWRAP_ARGS+=(
     "--setenv" "NO_AT_BRIDGE" "1"
     "--setenv" "GDK_BACKEND" "x11"
-    "--setenv" "GTK_THEME" "Adwaita:dark"
-    "--setenv" "QT_QPA_PLATFORMTHEME" "qt5ct"
 )
+
+if [ "$RIM_SHARE_THEMES" != 1 ]
+    then
+        RIM_BWRAP_ARGS+=(
+            "--setenv" "GTK_THEME" "Adwaita:dark"
+            "--setenv" "QT_QPA_PLATFORMTHEME" "qt5ct"
+        )
+fi
 
 [[ -f "$RUNROOTFS/etc/gtk-2.0/gtkrc" && \
  ! -f "$HOME/.config/gtk-2.0/gtkrc" && \
