@@ -28,6 +28,7 @@ post_install() {
             done
             locale-gen
     fi
+    sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' /var/RunDir/sharun/bin/uruntime
 }
 
 ## arg 1:  the new package version

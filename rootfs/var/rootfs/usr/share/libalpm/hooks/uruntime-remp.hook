@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = var/RunDir/sharun/bin/uruntime
+
+[Action]
+Description = Updating uruntime...
+When = PostTransaction
+Exec = /usr/bin/sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' /var/RunDir/sharun/bin/uruntime
