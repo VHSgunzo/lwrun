@@ -35,7 +35,7 @@ jobs:
             ./RunDir/Run rim-update
             ./RunDir/Run rim-shrink -a
             ./RunDir/Run rim-pkgls > pkg_list-lwrun.txt
-            ./RunDir/Run rim-build -d -b 18 -z -c 22 lwrun
+            ./RunDir/Run rim-build -d -b 23 -z -c 22 lwrun
             chmod u+rw -R RunDir && rm -rf RunDir
             sha256sum_lwrun="$(sha256sum lwrun)"
             zsyncmake lwrun
