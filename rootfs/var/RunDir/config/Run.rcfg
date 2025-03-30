@@ -15,7 +15,7 @@ if [[ "$ARG1" == '--uninstall' && "$RUNSRCNAME" =~ (lwrap|lwrun) ]]
         unset RIM_KEEP_OVERFS RIM_OVERFS_ID
     else
         RIM_CMPRS_LVL="${RIM_CMPRS_LVL:=22}"
-        RIM_CMPRS_BSIZE="${RIM_CMPRS_BSIZE:=23}"
+        RIM_CMPRS_BSIZE="${RIM_CMPRS_BSIZE:=18}"
         RIM_SYS_NVLIBS="${RIM_SYS_NVLIBS:=1}"
         RIM_UNSHARE_HOSTS="${RIM_UNSHARE_HOSTS:=1}"
         RIM_EXEC_SAME_PWD="${RIM_EXEC_SAME_PWD:=1}"
